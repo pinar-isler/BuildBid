@@ -1,0 +1,70 @@
+# ==============================================================================
+# BuildBid - Git Ignore Configuration
+# ==============================================================================
+
+# --- Environment Variables & Secrets (CRITICAL) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Go Language & Binaries ---
+backend/bin/
+backend/tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# --- Database & Local Storage (SQLite / PostgreSQL volumes) ---
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+buildbid.db
+postgres-data/
+pgdata/
+
+# --- Temporary Uploads & Processing Cache (Test files, PDFs, Excel) ---
+backend/uploads/
+backend/temp/
+*.log
+
+# --- Frontend Dependencies & Production Builds ---
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Operating System & Editor Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- IDEs & Tools ---
+.idea/
+*.swp
+*.swo
+*~
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
