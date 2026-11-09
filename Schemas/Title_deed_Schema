@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TitleDeedExtraction",
+  "description": "Structured extraction payload for Turkish land registry (Tapu) records.",
+  "type": "object",
+  "properties": {
+    "city": {
+      "type": "string",
+      "description": "Province/City where the property parcel is located (e.g., İstanbul)."
+    },
+    "district": {
+      "type": "string",
+      "description": "District/County of the property parcel (e.g., Kadıköy, Şile)."
+    },
+    "blockAda": {
+      "type": "string",
+      "description": "Cadastral block identifier (Ada number)."
+    },
+    "parcelParsel": {
+      "type": "string",
+      "description": "Cadastral parcel identifier (Parsel number)."
+    },
+    "totalAreaM2": {
+      "type": "number",
+      "minimum": 0.0,
+      "description": "Total surface area of the land parcel in square meters."
+    },
+    "shareholders": {
+      "type": "array",
+      "description": "List of deed titleholders and their legal ownership fractions.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "Turkish National Identity Number (T.C. Kimlik No) of the landowner."
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Full legal name of the landowner."
+          },
+          "shareFraction": {
+            "type": "string",
+            "description": "Legal share fraction string (e.g., '1/4', '3/8', '1/1')."
+          }
+        },
+        "required": ["nationalId", "fullName", "shareFraction"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["city", "district", "blockAda", "parcelParsel", "totalAreaM2", "shareholders"],
+  "additionalProperties": false
+}

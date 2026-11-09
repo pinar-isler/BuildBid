@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VendorQuotationExtraction",
+  "description": "Structured extraction payload for construction subcontractor quotation documents.",
+  "type": "object",
+  "properties": {
+    "vendorName": {
+      "type": "string",
+      "description": "The official business or legal name of the supplier/vendor issuing the quote."
+    },
+    "quotationDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Issue date of the quotation in ISO format (YYYY-MM-DD)."
+    },
+    "currency": {
+      "type": "string",
+      "enum": ["TRY", "USD", "EUR"],
+      "description": "The 3-letter ISO 4217 currency code specified in the quotation."
+    },
+    "extractedItems": {
+      "type": "array",
+      "description": "Itemized list of material, labor, or service line items extracted from the document.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rawDescription": {
+            "type": "string",
+            "description": "Exact description text of the work or material line item as printed on the document."
+          },
+          "quantity": {
+            "type": "number",
+            "minimum": 0.0,
+            "description": "Extracted numerical quantity for the line item. Must be a float."
+          },
+          "unitOfMeasure": {
+            "type": "string",
+            "description": "Unit of measurement (e.g., m2, m3, ton, kg, pcs, job, hours)."
+          },
+          "quotedUnitPrice": {
+            "type": "number",
+            "minimum": 0.0,
+            "description": "Extracted unit price for a single unit excluding VAT/taxes."
+          },
+          "isTaxIncluded": {
+            "type": "boolean",
+            "description": "True if the quoted unit price explicitly includes VAT/tax; false otherwise."
+          }
+        },
+        "required": [
+          "rawDescription",
+          "quantity",
+          "unitOfMeasure",
+          "quotedUnitPrice",
+          "isTaxIncluded"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["vendorName", "quotationDate", "currency", "extractedItems"],
+  "additionalProperties": false
+}
