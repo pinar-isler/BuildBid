@@ -1,0 +1,14 @@
+{
+  "Q-DEV-01": [
+    {"itemIndex": 0, "label": "correct", "candidateItemCodes": ["DEV-C30"], "reason": "Grade C30, pumped placement and volume unit agree."},
+    {"itemIndex": 1, "label": "correct", "candidateItemCodes": ["DEV-REBAR-12"], "reason": "The diameter matches Ø12, with kilograms as the unit."},
+    {"itemIndex": 2, "label": "ambiguous", "candidateItemCodes": ["DEV-PAINT-IN", "DEV-PAINT-OUT"], "reason": "The quotation gives neither interior nor exterior application."},
+    {"itemIndex": 3, "label": "unmatched", "candidateItemCodes": [], "reason": "The project BOQ has no crane operator line."}
+  ],
+  "Q-DEV-02": [
+    {"itemIndex": 0, "label": "correct", "candidateItemCodes": ["DEV-C25"], "reason": "C25 concrete placement is quoted by volume."},
+    {"itemIndex": 1, "label": "correct", "candidateItemCodes": ["DEV-REBAR-16"], "reason": "The diameter matches Ø16, with kilograms as the unit."},
+    {"itemIndex": 2, "label": "correct", "candidateItemCodes": ["DEV-EXC-FND"], "reason": "Foundation excavation with haulage is quoted by volume."},
+    {"itemIndex": 3, "label": "unmatched", "candidateItemCodes": [], "reason": "This line is for concrete transport per trip. The C25 BOQ line is for placement per cubic meter."}
+  ]
+}

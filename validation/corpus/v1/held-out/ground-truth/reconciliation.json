@@ -1,0 +1,14 @@
+{
+  "Q-HOLD-01": [
+    {"itemIndex": 0, "label": "correct", "candidateItemCodes": ["HOLD-C35"], "reason": "Grade C35/45, pumped placement and volume unit agree across languages."},
+    {"itemIndex": 1, "label": "ambiguous", "candidateItemCodes": ["HOLD-INS-ROOF", "HOLD-INS-WALL"], "reason": "Both BOQ entries use 80 mm mineral wool. The application location is absent."},
+    {"itemIndex": 2, "label": "correct", "candidateItemCodes": ["HOLD-DRAIN-150"], "reason": "The drain pipe diameter is DN150 and its unit is linear meters."},
+    {"itemIndex": 3, "label": "unmatched", "candidateItemCodes": [], "reason": "The project BOQ has no temporary lighting rental line."}
+  ],
+  "Q-HOLD-02": [
+    {"itemIndex": 0, "label": "correct", "candidateItemCodes": ["HOLD-C40"], "reason": "Grade C40/50, pumped placement and volume unit agree."},
+    {"itemIndex": 1, "label": "correct", "candidateItemCodes": ["HOLD-DRAIN-100"], "reason": "The drain pipe diameter is DN100 and its unit is linear meters."},
+    {"itemIndex": 2, "label": "ambiguous", "candidateItemCodes": ["HOLD-DOOR-90", "HOLD-DOOR-110"], "reason": "Both doors are EI60. The quotation omits the width."},
+    {"itemIndex": 3, "label": "unmatched", "candidateItemCodes": [], "reason": "The quoted pipe is DN200. The BOQ contains only DN100 and DN150 drain pipes."}
+  ]
+}

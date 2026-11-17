@@ -1,0 +1,12 @@
+{
+  "city": "İzmir",
+  "district": "Güzelbahçe",
+  "blockAda": "07008",
+  "parcelParsel": "0009",
+  "totalAreaM2": 9050.25,
+  "shareholders": [
+    {"nationalId": "SYN-HOLD-001", "fullName": "Kurgu Paydaş F", "shareFraction": "3/8"},
+    {"nationalId": "SYN-HOLD-002", "fullName": "Örnek Paydaş G", "shareFraction": "1/8"},
+    {"nationalId": "SYN-HOLD-003", "fullName": "Örnek Paydaş G", "shareFraction": "1/2"}
+  ]
+}

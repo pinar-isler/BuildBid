@@ -1,0 +1,12 @@
+{
+  "city": "İstanbul",
+  "district": "Kadıköy",
+  "blockAda": "00124",
+  "parcelParsel": "007",
+  "totalAreaM2": 1234.50,
+  "shareholders": [
+    {"nationalId": "SYN-DEV-001", "fullName": "Deneme Paydaş A", "shareFraction": "1/2"},
+    {"nationalId": "SYN-DEV-002", "fullName": "Örnek Paydaş B", "shareFraction": "1/3"},
+    {"nationalId": "SYN-DEV-003", "fullName": "Kurgu Paydaş C", "shareFraction": "1/6"}
+  ]
+}

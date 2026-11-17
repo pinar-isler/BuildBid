@@ -1,0 +1,11 @@
+{
+  "vendorName": "Kurgu Beton ve Yapı",
+  "quotationDate": "2026-03-12",
+  "currency": "TRY",
+  "extractedItems": [
+    {"rawDescription": "C30 pompalı hazır beton", "quantity": 1250.50, "unitOfMeasure": "m3", "quotedUnitPrice": 2450.75, "isTaxIncluded": false},
+    {"rawDescription": "Ø12 nervürlü donatı çeliği", "quantity": 830.25, "unitOfMeasure": "kg", "quotedUnitPrice": 31.40, "isTaxIncluded": false},
+    {"rawDescription": "Akrilik boya, iki kat", "quantity": 210.50, "unitOfMeasure": "m2", "quotedUnitPrice": 175.00, "isTaxIncluded": false},
+    {"rawDescription": "Mobil vinç operatörü", "quantity": 4.50, "unitOfMeasure": "h", "quotedUnitPrice": 1250.00, "isTaxIncluded": false}
+  ]
+}

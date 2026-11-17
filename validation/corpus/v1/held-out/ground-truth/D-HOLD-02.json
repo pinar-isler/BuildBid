@@ -1,0 +1,11 @@
+{
+  "city": "Muğla",
+  "district": "Menteşe",
+  "blockAda": "0330",
+  "parcelParsel": "012",
+  "totalAreaM2": 62.75,
+  "shareholders": [
+    {"nationalId": "SYN-HOLD-004", "fullName": "Deneme Paydaş H", "shareFraction": "2/3"},
+    {"nationalId": "SYN-HOLD-005", "fullName": "Kurgu Paydaş J", "shareFraction": "1/3"}
+  ]
+}

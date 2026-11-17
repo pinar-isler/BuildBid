@@ -1,0 +1,11 @@
+{
+  "vendorName": "Kurgu Kanal Yapı Malzemeleri",
+  "quotationDate": "2026-08-21",
+  "currency": "TRY",
+  "extractedItems": [
+    {"rawDescription": "C40/50 pompalı hazır beton", "quantity": 64.25, "unitOfMeasure": "m3", "quotedUnitPrice": 3095.10, "isTaxIncluded": false},
+    {"rawDescription": "DN100 PVC drenaj borusu", "quantity": 125.50, "unitOfMeasure": "m", "quotedUnitPrice": 88.40, "isTaxIncluded": false},
+    {"rawDescription": "Yangın kapısı, EI60", "quantity": 3, "unitOfMeasure": "pcs", "quotedUnitPrice": 14500.00, "isTaxIncluded": false},
+    {"rawDescription": "DN200 PVC drenaj borusu", "quantity": 19.25, "unitOfMeasure": "m", "quotedUnitPrice": 196.75, "isTaxIncluded": false}
+  ]
+}

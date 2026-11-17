@@ -1,0 +1,11 @@
+{
+  "vendorName": "Örnek Şantiye Tedarik",
+  "quotationDate": "2026-04-05",
+  "currency": "EUR",
+  "extractedItems": [
+    {"rawDescription": "C25 hazır beton dökümü", "quantity": 18, "unitOfMeasure": "m3", "quotedUnitPrice": 85.50, "isTaxIncluded": false},
+    {"rawDescription": "Ø16 nervürlü donatı çeliği", "quantity": 420, "unitOfMeasure": "kg", "quotedUnitPrice": 0.92, "isTaxIncluded": false},
+    {"rawDescription": "Temel kazısı ve nakliye", "quantity": 36.75, "unitOfMeasure": "m3", "quotedUnitPrice": 19.25, "isTaxIncluded": false},
+    {"rawDescription": "C25 hazır beton sevkiyatı", "quantity": 3, "unitOfMeasure": "trip", "quotedUnitPrice": 100.00, "isTaxIncluded": false}
+  ]
+}

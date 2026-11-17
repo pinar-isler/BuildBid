@@ -1,0 +1,11 @@
+{
+  "vendorName": "Example Canal Supply",
+  "quotationDate": "2026-07-09",
+  "currency": "USD",
+  "extractedItems": [
+    {"rawDescription": "C35/45 ready-mix concrete, pumped", "quantity": 86.25, "unitOfMeasure": "m3", "quotedUnitPrice": 112.50, "isTaxIncluded": false},
+    {"rawDescription": "Mineral wool insulation 80 mm", "quantity": 93.50, "unitOfMeasure": "m2", "quotedUnitPrice": 17.75, "isTaxIncluded": false},
+    {"rawDescription": "PVC drain pipe DN 150", "quantity": 24, "unitOfMeasure": "m", "quotedUnitPrice": 14.20, "isTaxIncluded": false},
+    {"rawDescription": "Temporary site lighting rental", "quantity": 2, "unitOfMeasure": "week", "quotedUnitPrice": 180.00, "isTaxIncluded": false}
+  ]
+}

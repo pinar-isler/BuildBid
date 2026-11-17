@@ -1,0 +1,21 @@
+{
+  "SYN-DEV": [
+    {"itemCode": "DEV-C25", "description": "C25 hazır beton dökümü", "unitOfMeasure": "m3", "estimatedQuantity": 20, "estimatedUnitPrice": 2200},
+    {"itemCode": "DEV-C30", "description": "C30 pompa ile hazır beton dökümü", "unitOfMeasure": "m3", "estimatedQuantity": 1200, "estimatedUnitPrice": 2425},
+    {"itemCode": "DEV-REBAR-12", "description": "Ø12 nervürlü donatı çeliği", "unitOfMeasure": "kg", "estimatedQuantity": 850, "estimatedUnitPrice": 30.50},
+    {"itemCode": "DEV-REBAR-16", "description": "Ø16 nervürlü donatı çeliği", "unitOfMeasure": "kg", "estimatedQuantity": 400, "estimatedUnitPrice": 32.75},
+    {"itemCode": "DEV-PAINT-IN", "description": "İç cephe akrilik boya, iki kat", "unitOfMeasure": "m2", "estimatedQuantity": 205, "estimatedUnitPrice": 160},
+    {"itemCode": "DEV-PAINT-OUT", "description": "Dış cephe akrilik boya, iki kat", "unitOfMeasure": "m2", "estimatedQuantity": 225, "estimatedUnitPrice": 183},
+    {"itemCode": "DEV-EXC-FND", "description": "Temel kazısı, yükleme ve nakliye", "unitOfMeasure": "m3", "estimatedQuantity": 40, "estimatedUnitPrice": 690}
+  ],
+  "SYN-HOLD": [
+    {"itemCode": "HOLD-C35", "description": "C35/45 pompalı hazır beton dökümü", "unitOfMeasure": "m3", "estimatedQuantity": 90, "estimatedUnitPrice": 2910},
+    {"itemCode": "HOLD-C40", "description": "C40/50 pompalı hazır beton dökümü", "unitOfMeasure": "m3", "estimatedQuantity": 65, "estimatedUnitPrice": 3140},
+    {"itemCode": "HOLD-INS-ROOF", "description": "Çatı için 80 mm mineral yün yalıtımı", "unitOfMeasure": "m2", "estimatedQuantity": 110, "estimatedUnitPrice": 630},
+    {"itemCode": "HOLD-INS-WALL", "description": "Duvar için 80 mm mineral yün yalıtımı", "unitOfMeasure": "m2", "estimatedQuantity": 95, "estimatedUnitPrice": 605},
+    {"itemCode": "HOLD-DRAIN-100", "description": "PVC drenaj borusu, DN100", "unitOfMeasure": "m", "estimatedQuantity": 130, "estimatedUnitPrice": 90},
+    {"itemCode": "HOLD-DRAIN-150", "description": "PVC drenaj borusu, DN150", "unitOfMeasure": "m", "estimatedQuantity": 28, "estimatedUnitPrice": 475},
+    {"itemCode": "HOLD-DOOR-90", "description": "90 cm genişliğinde EI60 yangın kapısı", "unitOfMeasure": "pcs", "estimatedQuantity": 4, "estimatedUnitPrice": 14000},
+    {"itemCode": "HOLD-DOOR-110", "description": "110 cm genişliğinde EI60 yangın kapısı", "unitOfMeasure": "pcs", "estimatedQuantity": 2, "estimatedUnitPrice": 15800}
+  ]
+}

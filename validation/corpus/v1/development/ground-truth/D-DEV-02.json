@@ -1,0 +1,10 @@
+{
+  "city": "Ankara",
+  "district": "Çankaya",
+  "blockAda": "0904",
+  "parcelParsel": "0021",
+  "totalAreaM2": 87.625,
+  "shareholders": [
+    {"nationalId": "SYN-DEV-004", "fullName": "Deneme Paydaş D", "shareFraction": "1/1"}
+  ]
+}

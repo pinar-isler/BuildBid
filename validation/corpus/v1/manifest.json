@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "splits": {
+    "development": {
+      "boqProjectId": "SYN-DEV",
+      "documents": [
+        {
+          "id": "Q-DEV-01",
+          "kind": "quotation",
+          "file": "Q-DEV-01.pdf",
+          "outcome": "complete",
+          "sha256": "8d0e80cab77576ce97317de5fa196d37d61b3f57e895440efcf9942e9a5aed92"
+        },
+        {
+          "id": "Q-DEV-02",
+          "kind": "quotation",
+          "file": "Q-DEV-02.png",
+          "outcome": "complete",
+          "sha256": "6b22c370632f272bfd2c7f21194881e0aba5d69971ae6e09511a0d556c61508e"
+        },
+        {
+          "id": "Q-DEV-03",
+          "kind": "quotation",
+          "file": "Q-DEV-03.pdf",
+          "outcome": "incomplete",
+          "sourceRowCount": 1,
+          "sha256": "5437be0552dd17ff67cae83d136acf8bb45bcc874904a8e53bd4efdc1bca63b8",
+          "unavailableFields": [
+            {
+              "pointer": "/extractedItems/0/quotedUnitPrice",
+              "reason": "The document marks the unit price as pending and prints a dash in its place."
+            }
+          ]
+        },
+        {
+          "id": "D-DEV-01",
+          "kind": "title_deed",
+          "file": "D-DEV-01.pdf",
+          "outcome": "complete",
+          "sha256": "9b19b171358851716d10958dd9f23b32cade3b0f762aab61a92f2d156f8d02cd"
+        },
+        {
+          "id": "D-DEV-02",
+          "kind": "title_deed",
+          "file": "D-DEV-02.png",
+          "outcome": "complete",
+          "sha256": "91557028905f6c8c38a401ce67257b5d12b845c75d36f50c5c19c432b1c28697"
+        }
+      ]
+    },
+    "held-out": {
+      "boqProjectId": "SYN-HOLD",
+      "documents": [
+        {
+          "id": "Q-HOLD-01",
+          "kind": "quotation",
+          "file": "Q-HOLD-01.pdf",
+          "outcome": "complete",
+          "sha256": "73ec8d18e8a4c77fb711f76b460a5cd0362a989a8e0c74cfc0dc7ad433b13311"
+        },
+        {
+          "id": "Q-HOLD-02",
+          "kind": "quotation",
+          "file": "Q-HOLD-02.png",
+          "outcome": "complete",
+          "sha256": "dce02ee0e863da3617aaee1add86ca76eef0367b1486bf1c25adb6627102601d"
+        },
+        {
+          "id": "D-HOLD-01",
+          "kind": "title_deed",
+          "file": "D-HOLD-01.pdf",
+          "outcome": "complete",
+          "sha256": "98a5be3dd8121898291d51a71ec090e3f108dd5ba8f7cf65b34578aeb87d9973"
+        },
+        {
+          "id": "D-HOLD-02",
+          "kind": "title_deed",
+          "file": "D-HOLD-02.png",
+          "outcome": "complete",
+          "sha256": "8cbabe71e7215a75bed5421009b7092501dcd2d351e2137c7e41937360d224f5"
+        },
+        {
+          "id": "D-HOLD-03",
+          "kind": "title_deed",
+          "file": "D-HOLD-03.png",
+          "outcome": "incomplete",
+          "sourceRowCount": 1,
+          "sha256": "b861d122d1c553d1b2bfc95be853a7c6d867a53974de48d6c586566952a5a331",
+          "unavailableFields": [
+            {
+              "pointer": "/shareholders/0/nationalId",
+              "reason": "The identity value is obscured in the scan and is unavailable."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
