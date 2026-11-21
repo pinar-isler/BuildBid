@@ -66,12 +66,50 @@ To plug in another provider, implement `ExtractionProvider.extract(document, kin
 
 Both adapters send PDF, PNG, or JPEG bytes inline and request schema-constrained JSON. The request schemas allow `null` for unavailable field values so the canonical validator can distinguish a complete extraction from a partial one that needs review. Refusals, truncated responses, and transport errors return `failed`. The tests exercise Gemini `generateContent` and OpenAI Responses formats with synthetic HTTP responses and blocked network access.
 
+## WP4 Task 4.3 BOQ matching
+
+Construct `BoqMatcher` with the master BOQ rows for the quotation's project. `match_quotation` accepts an extracted quotation object and returns one result per `extractedItems` row in source order. Each result includes a status, a ranked candidate list with scores and unconfirmed specifications, and a reason. Only `matched` results carry a selected BOQ code. `ambiguous` results go to manual review. [Matching engine](matching.py)
+
+```python
+from validation.matching import BoqMatcher
+
+results = BoqMatcher(master_boq[project_id]).match_quotation(quotation_payload)
+```
+
+The matcher folds Turkish case and diacritics, resolves common unit aliases, and aligns a small set of English and Turkish construction terms. Quotation units must agree after alias normalization. The matcher compares parsed concrete and steel grades, fire ratings, application locations, nominal and physical diameters, and dimensions separately. Conflicting specifications exclude a candidate. A plausible candidate with an unconfirmed specification, such as door width or a full concrete grade, goes to review. Measurements in mm, cm, and m are normalized within descriptions. Compound dimensions keep their printed order.
+
+The text score is the higher of two normalized Levenshtein scores, one in source word order and one in alphabetical word order. The matcher keeps candidates at or above `0.60`. An automatic link requires a score of at least `0.68`, confirmed specifications, and a lead of more than `0.08` over the next candidate. Equal scores are displayed in BOQ-code order for reproducibility.
+
+### Benchmark results and evaluation status
+
+- **Development results.** `SYN-DEV` contains the eight rows used to develop the matching rules.
+- **Initial held-out results.** The first run on `SYN-HOLD` is the historical baseline before the bilingual term and dimension-handling adjustments. It linked 2 of 4 linkable rows and sent 0 of 2 ambiguous rows to review.
+- **Post-adjustment regression results.** The misses from the initial run were used to debug the matcher. `SYN-HOLD` is now a regression set for Task 4.3. The revised matcher linked 4 of 4 linkable rows and sent 2 of 2 ambiguous rows to review on those same eight rows.
+
+| Metric | Development | Initial held-out baseline | Post-adjustment regression on `SYN-HOLD` |
+| --- | ---: | ---: | ---: |
+| Top-1 accuracy on linkable rows | 5/5 | 2/4 | 4/4 |
+| Automatic match precision | 5/5 | 2/2 | 4/4 |
+| Automatic match coverage | 5/8 | 2/8 | 4/8 |
+| Manual review rate | 1/8 | 0/8 | 2/8 |
+| Ambiguous rows sent to review | 1/1 | 0/2 | 2/2 |
+| Unmatched rows left unlinked | 2/2 | 2/2 | 2/2 |
+| Correct decisions overall | 8/8 | 4/8 | 8/8 |
+
+**The 90% RAD target remains unverified.** Assess it on a fresh, separately labeled evaluation set whose documents, BOQ rows, and labels have been kept out of tuning and debugging. Before running the evaluation, freeze the matcher, thresholds, and scoring rules, and confirm the RAD metric and its denominator. Report the measured result and sample counts from that fresh set.
+
+The offline evaluator runs the current matcher against gold quotation rows and the project BOQ. Its JSON reports label the phases `development` and `post_adjustment_regression`. Both reports have `independentEvaluation: false`. The initial held-out counts are recorded in the table above. [Evaluator](evaluate_matching.py)
+
+```sh
+python -B -m validation.evaluate_matching --split both
+```
+
 ## Run a held-out benchmark
 
 1. Use the development documents, labels, and `SYN-DEV` BOQ to develop prompts, normalization rules, and match thresholds. Freeze those settings and the scoring rules before the held-out run. Keep held-out documents and labels out of tuning, examples, and debugging.
 2. Run the frozen extractor on every held-out source. Supply the document and its type. Keep gold values, outcome labels, and annotation reasons with the evaluator. Use an opaque input filename if the extractor receives filenames. Record the corpus version, reviewed corpus and schema checksums, code and prompt revisions, model settings if applicable, and each raw response, validated output, or failure by fixture ID.
 3. Score extraction on the complete cases. Report schema-valid response rate with every complete input in the denominator. Align quote rows by normalized description and deed rows by synthetic ID, consuming duplicates in source order. Count unpaired gold rows as missing and unpaired predictions as extra. Report row precision and recall, and field accuracy over expected fields, with missing fields counted as incorrect. For text, normalize Unicode to NFC and trim or collapse whitespace. Preserve case, diacritics, punctuation, and leading zeros. Apply the documented unit aliases and compare numbers as decimals. Report mean absolute error and scored-pair counts by quantity unit, price currency, and deed area. Score incomplete cases separately. A pass requires flagging every annotated unavailable field by pointer, retaining the affected row for review, and leaving its unavailable value unset. A fabricated value, a silently dropped row, or an unflagged blank or zero fails even if the extractor returns schema-valid JSON.
-4. Evaluate reconciliation independently by supplying the gold quotation rows and the `SYN-HOLD` BOQ. Measure top-1 accuracy on `correct` rows, counting abstentions as misses. Auto-match precision is the number of correct automatic links divided by all automatic links. Any automatic assignment on an ambiguous or unmatched row is a false positive. Divide automatic assignments and manual-review referrals by all labeled rows to report auto-match coverage and manual-review rate. Also report ambiguous rows routed for review and unmatched rows left without a BOQ link. An additional end-to-end run can measure the effect of extraction errors on matching.
+4. To isolate reconciliation from extraction, supply the gold quotation rows and their project BOQ. For Task 4.3, `SYN-HOLD` supplies regression results and a fresh evaluation set is required for independent scoring. Measure top-1 accuracy on `correct` rows, counting abstentions as misses. Auto-match precision is the number of correct automatic links divided by all automatic links. Any automatic assignment on an ambiguous or unmatched row is a false positive. Divide automatic assignments and manual-review referrals by all labeled rows to report auto-match coverage and manual-review rate. Also report ambiguous rows routed for review and unmatched rows left without a BOQ link. An additional end-to-end run can measure the effect of extraction errors on matching.
 5. Publish counts and denominators with all rates, broken down by document type and source format where applicable. Keep the run manifest and outputs for comparison. If held-out examples inform a change, treat that split as development evidence and use a fresh holdout for the next independent evaluation.
 
 ## Synthetic-data limitations
