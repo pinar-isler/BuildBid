@@ -2,17 +2,18 @@ package models
 
 import "gorm.io/gorm"
 
-// QuotationItem, Multimodal AI tarafından yüklenen tedarikçi teklifinden (VendorQuotation) çıkarılan ham satır kalemlerini temsil eder[cite: 3].
+// QuotationItem, tedarikçi teklifinden (VendorQuotation) çıkarılan ham satır kalemlerini temsil eder.
 type QuotationItem struct {
 	gorm.Model
-	VendorQuotationID uint    // Foreign key (VendorQuotation tablosu ile 1-to-N ilişki)
-	QuoteItemID       string  `gorm:"type:varchar(100);not null;uniqueIndex"`
+	VendorQuotationID uint    `gorm:"not null;index:idx_quote_item"`
+	QuoteItemID       string  `gorm:"type:varchar(100);not null;uniqueIndex:idx_quote_item"`
 	RawDescription    string  `gorm:"type:text;not null"`
-	Quantity          float64 `gorm:"type:decimal(15,2);not null"` // Deterministik matematiksel işlemler için Double/float64[cite: 3]
+	Quantity          float64 `gorm:"type:decimal(15,2);not null"`
 	UnitOfMeasure     string  `gorm:"type:varchar(20);not null"`
-	QuotedUnitPrice   float64 `gorm:"type:decimal(15,2);not null"` // Deterministik matematiksel işlemler için Double/float64[cite: 3]
+	QuotedUnitPrice   float64 `gorm:"type:decimal(15,2);not null"`
 	IsTaxIncluded     bool    `gorm:"default:false"`
 
-	// 1-to-1 İlişki: Bu kalemin Master BOQ referansıyla olan uzlaştırma (reconciliation) bağlantısı[cite: 3]
+	// İlişkiler
+	VendorQuotation      VendorQuotation       `gorm:"foreignKey:VendorQuotationID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"`
 	ReconciliationRecord *ReconciliationRecord `gorm:"foreignKey:QuotationItemID"`
 }

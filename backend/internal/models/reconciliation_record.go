@@ -2,14 +2,18 @@ package models
 
 import "gorm.io/gorm"
 
-// ReconciliationRecord, bir satıcı teklif kalemi (QuotationItem) ile proje ana metraj kalemi (MasterBOQItem) arasındaki eşleşmeyi temsil eder[cite: 3].
+// ReconciliationRecord, bir satıcı teklif kalemi (QuotationItem) ile proje ana metraj kalemi (MasterBOQItem) arasındaki eşleşmeyi temsil eder.
 type ReconciliationRecord struct {
 	gorm.Model
-	QuotationItemID uint // Foreign key (QuotationItem tablosu ile 1-to-1 ilişki)
-	MasterBOQItemID uint // Foreign key (MasterBOQItem tablosuna referans)
+	QuotationItemID uint `gorm:"not null;uniqueIndex"`
+	MasterBOQItemID uint `gorm:"not null;index"`
 
 	ReconciliationID string  `gorm:"type:varchar(100);uniqueIndex;not null"`
-	ConfidenceScore  float64 `gorm:"type:decimal(5,2);not null"` // Hibrit güven skoru (örn: 78.50)[cite: 3]
-	MatchStatus      string  `gorm:"type:varchar(50);not null"`  // Durumlar: AutoMatched, PendingReview, HumanApproved, Discarded[cite: 3]
-	IsHumanVerified  bool    `gorm:"default:false"`              // İnsan döngüsü (HITL) manuel onay durumu[cite: 3]
+	ConfidenceScore  float64 `gorm:"type:decimal(5,2);not null"`
+	MatchStatus      string  `gorm:"type:varchar(50);not null"`
+	IsHumanVerified  bool    `gorm:"default:false"`
+
+	// İlişkiler
+	QuotationItem QuotationItem `gorm:"foreignKey:QuotationItemID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"`
+	MasterBOQItem MasterBOQItem `gorm:"foreignKey:MasterBOQItemID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT" json:"-"`
 }
