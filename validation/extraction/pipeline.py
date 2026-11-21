@@ -2,13 +2,13 @@
 
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
-from decimal import Decimal, DecimalException
-import json
+from decimal import DecimalException
 from pathlib import Path
 from typing import Any, Literal, Optional, Protocol, Union
 
 from jsonschema import Draft202012Validator
 
+from .jsonio import loads_json
 from .media import DEFAULT_MAX_BYTES, Document, InputError, load_document
 
 
@@ -54,19 +54,6 @@ class ExtractionResult:
     payload: Optional[dict[str, Any]] = None
     unavailable_fields: tuple[UnavailableField, ...] = ()
     errors: tuple[ExtractionError, ...] = ()
-
-
-def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    result = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError("Duplicate JSON key.")
-        result[key] = value
-    return result
-
-
-def _reject_constant(token: str) -> None:
-    raise ValueError(f"{token} is outside the JSON number grammar.")
 
 
 def _pointer(path: Iterable[Union[str, int]]) -> str:
@@ -116,19 +103,59 @@ def _failed(kind: str, code: str, message: str) -> ExtractionResult:
     return ExtractionResult("failed", kind, errors=(ExtractionError(code, message),))
 
 
+def load_validators() -> dict[str, Draft202012Validator]:
+    validators = {}
+    for kind, path in SCHEMA_FILES.items():
+        schema = loads_json(path.read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        validators[kind] = Draft202012Validator(
+            schema, format_checker=Draft202012Validator.FORMAT_CHECKER
+        )
+    return validators
+
+
+def validate_response(kind: str, response: ProviderResponse,
+                      validator: Draft202012Validator) -> ExtractionResult:
+    """Apply the pipeline's validation rules to a single raw provider response."""
+    if not isinstance(response, ProviderResponse) or not isinstance(response.payload_json, str):
+        return _failed(kind, "invalid_provider_response", "The provider must return JSON text.")
+    try:
+        payload = loads_json(response.payload_json)
+    except (ValueError, DecimalException, RecursionError):
+        return _failed(kind, "invalid_json", "The provider returned invalid or ambiguous JSON.")
+
+    missing = {}
+    available = _available_payload(validator.schema, payload, (), missing)
+    violations = tuple(sorted(
+        (ExtractionError("schema_violation", f"Canonical schema rule '{error.validator}' failed.",
+                         _pointer(error.absolute_path))
+         for error in validator.iter_errors(available)
+         if not (missing and error.validator == "required")),
+        key=lambda error: (error.pointer, error.message),
+    ))
+    reasons = response.unavailable_reasons
+    if not isinstance(reasons, Mapping) or any(
+        pointer not in missing or not isinstance(reason, str) or not reason.strip()
+        for pointer, reason in reasons.items()
+    ):
+        return _failed(kind, "invalid_provider_response",
+                       "Unavailable reasons must identify missing fields and contain text.")
+    fields = tuple(UnavailableField(pointer, reasons.get(pointer, default))
+                   for pointer, default in missing.items())
+    if violations:
+        return ExtractionResult("failed", kind, unavailable_fields=fields, errors=violations)
+    if fields:
+        return ExtractionResult("needs_review", kind, payload=payload, unavailable_fields=fields)
+    return ExtractionResult("complete", kind, payload=payload)
+
+
 class ExtractionPipeline:
     def __init__(self, provider: ExtractionProvider, *, max_bytes: int = DEFAULT_MAX_BYTES):
         if type(max_bytes) is not int or max_bytes < 1:
             raise ValueError("max_bytes must be a positive integer.")
         self._provider = provider
         self._max_bytes = max_bytes
-        self._validators = {}
-        for kind, path in SCHEMA_FILES.items():
-            schema = json.loads(path.read_text(encoding="utf-8"))
-            Draft202012Validator.check_schema(schema)
-            self._validators[kind] = Draft202012Validator(
-                schema, format_checker=Draft202012Validator.FORMAT_CHECKER
-            )
+        self._validators = load_validators()
 
     def run(self, path: Union[str, Path], kind: str) -> ExtractionResult:
         validator = self._validators.get(kind)
@@ -146,34 +173,4 @@ class ExtractionPipeline:
         except Exception:
             return _failed(kind, "provider_error", "The extraction provider could not finish the request.")
 
-        if not isinstance(response, ProviderResponse) or not isinstance(response.payload_json, str):
-            return _failed(kind, "invalid_provider_response", "The provider must return JSON text.")
-        try:
-            payload = json.loads(response.payload_json, object_pairs_hook=_unique_object,
-                                 parse_float=Decimal, parse_constant=_reject_constant)
-        except (ValueError, DecimalException, RecursionError):
-            return _failed(kind, "invalid_json", "The provider returned invalid or ambiguous JSON.")
-
-        missing = {}
-        available = _available_payload(validator.schema, payload, (), missing)
-        violations = tuple(sorted(
-            (ExtractionError("schema_violation", f"Canonical schema rule '{error.validator}' failed.",
-                             _pointer(error.absolute_path))
-             for error in validator.iter_errors(available)
-             if not (missing and error.validator == "required")),
-            key=lambda error: (error.pointer, error.message),
-        ))
-        reasons = response.unavailable_reasons
-        if not isinstance(reasons, Mapping) or any(
-            pointer not in missing or not isinstance(reason, str) or not reason.strip()
-            for pointer, reason in reasons.items()
-        ):
-            return _failed(kind, "invalid_provider_response",
-                           "Unavailable reasons must identify missing fields and contain text.")
-        fields = tuple(UnavailableField(pointer, reasons.get(pointer, default))
-                       for pointer, default in missing.items())
-        if violations:
-            return ExtractionResult("failed", kind, unavailable_fields=fields, errors=violations)
-        if fields:
-            return ExtractionResult("needs_review", kind, payload=payload, unavailable_fields=fields)
-        return ExtractionResult("complete", kind, payload=payload)
+        return validate_response(kind, response, validator)

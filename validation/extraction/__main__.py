@@ -2,25 +2,14 @@
 
 import argparse
 from dataclasses import asdict
-from decimal import Decimal
-import json
 from pathlib import Path
 
+from .jsonio import dumps_json
 from .mock import MockProvider, MockResponseProvider
 from .pipeline import SCHEMA_FILES, ExtractionPipeline
 
 
 EXIT_CODES = {"complete": 0, "needs_review": 1, "failed": 2}
-
-
-def _json(value) -> str:
-    if isinstance(value, Decimal):
-        return str(value)
-    if isinstance(value, dict):
-        return "{" + ", ".join(f"{json.dumps(key)}: {_json(item)}" for key, item in value.items()) + "}"
-    if isinstance(value, (list, tuple)):
-        return "[" + ", ".join(_json(item) for item in value) + "]"
-    return json.dumps(value, allow_nan=False)
 
 
 def main() -> int:
@@ -33,7 +22,7 @@ def main() -> int:
 
     provider = MockResponseProvider(args.mock_response) if args.mock_response else MockProvider()
     result = ExtractionPipeline(provider).run(args.input, args.kind)
-    print(_json({
+    print(dumps_json({
         "status": result.status,
         "documentKind": result.kind,
         "payload": result.payload,

@@ -104,6 +104,34 @@ The offline evaluator runs the current matcher against gold quotation rows and t
 python -B -m validation.evaluate_matching --split both
 ```
 
+## WP4 Task 4.4 extraction evaluation
+
+Run the evaluator with fixture replay for an operational smoke test, or supply a saved bundle of raw predictions for quality scoring. The evaluator runs locally, with one source per report. For corpus v1, `independentEvaluation` is `false`. Mock reports suppress all quality metrics, including field and row scores, numeric errors, and incomplete-case pass rates. Mock timing measures the local pipeline replay. [Extraction evaluator](evaluate_extraction.py)
+
+```sh
+python -B -m validation.evaluate_extraction --mock --split both
+python -B -m validation.evaluate_extraction --mock --format json
+python -B -m validation.evaluate_extraction --predictions /path/to/predictions.json --split development
+python -B -m validation.evaluate_extraction --predictions /path/to/predictions.json --format json
+```
+
+Save the original provider response text in `payloadJson`, including malformed JSON when that is what the provider produced. Use `null` for a recorded attempt that produced no text. The prediction bundle declares `source` as `live` for captured live results or `mock` for synthetic results. The report relies on this declaration. Keep provider and model runs in separate bundles. If a record repeats `source`, `provider`, or `model`, its value must agree with the bundle. Each record may supply `latencyMs`, integer `inputTokens`, `outputTokens`, and `totalTokens`, `costUsd`, and an `unavailableReasons` object keyed by JSON Pointer. Token and cost totals cover only records with supplied values, including failed attempts. Latency percentiles use nearest rank over measured documents. Zero counts as a recorded value. Unknown telemetry remains unavailable.
+
+```json
+{
+  "source": "live",
+  "provider": "provider-name",
+  "model": "model-id",
+  "predictions": {
+    "Q-DEV-01": {"payloadJson": null, "latencyMs": 815.2, "inputTokens": 620}
+  }
+}
+```
+
+The example shows the bundle shape for one recorded attempt with no response. Missing fixture records count as failures for the selected split. Reports distinguish missing predictions, attempts with no response, invalid JSON, and schema errors. JSON reports include per-document outcomes, missing field pointers, telemetry coverage, and summaries by split, document kind, and source format. They include corpus manifest and schema hashes for reproducibility. The console format summarizes the same run's metrics.
+
+On complete cases, field accuracy and recall use the number of expected scalar values as the denominator. Field precision uses the number of predicted scalar values, including those on extra rows. Wrong values count as both a missed expected value and an incorrect predicted value for F1. Row precision, recall, and F1 use the number of aligned quotation or shareholder rows. Alignment uses normalized descriptions for quotations and IDs for deeds, consuming duplicates in source order. Rates with empty denominators are unavailable. Schema validity checks the original parsed response against the canonical schema. A prediction rejected by the extraction pipeline contributes missing expected fields and rows to the quality scores. Numeric calculations use 50 significant decimal digits and report mean and maximum absolute errors with scored and expected pair counts. Quantities require matching units, and unit prices require matching units and currency. Incomplete cases are scored separately for retaining the expected number of rows, flagging the expected unavailable fields, and leaving those values unset.
+
 ## Run a held-out benchmark
 
 1. Use the development documents, labels, and `SYN-DEV` BOQ to develop prompts, normalization rules, and match thresholds. Freeze those settings and the scoring rules before the held-out run. Keep held-out documents and labels out of tuning, examples, and debugging.
