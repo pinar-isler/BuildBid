@@ -60,6 +60,12 @@ python -B -m validation.extraction document.jpg --kind quotation --mock-response
 
 To plug in another provider, implement `ExtractionProvider.extract(document, kind)` and supply the instance to `ExtractionPipeline(provider)`. `document` carries the validated bytes and MIME type. Return `ProviderResponse` with JSON payload text and, optionally, reasons keyed by JSON Pointer into that payload. Use `null` or omit a required property when its value is unavailable. The pipeline also flags blank required strings and empty required row arrays for review. It preserves zero, `false`, and decimal precision and validates available values against the canonical schema with date checking enabled. Providers can raise `ProviderError` with a caller-safe message when extraction cannot finish. [Provider contract](extraction/pipeline.py)
 
+### Offline provider adapter tests
+
+`GeminiProvider` and `OpenAIProvider` accept an injected client with a `post(url, json=..., timeout=...)` method. The response supplies an integer `status_code` and a `json()` method. Construct either adapter with a fake client and pass it to `ExtractionPipeline`. The CLI uses its local mock providers. [Adapters](extraction/providers.py) · [Fake client tests](test_providers.py)
+
+Both adapters send PDF, PNG, or JPEG bytes inline and request schema-constrained JSON. The request schemas allow `null` for unavailable field values so the canonical validator can distinguish a complete extraction from a partial one that needs review. Refusals, truncated responses, and transport errors return `failed`. The tests exercise Gemini `generateContent` and OpenAI Responses formats with synthetic HTTP responses and blocked network access.
+
 ## Run a held-out benchmark
 
 1. Use the development documents, labels, and `SYN-DEV` BOQ to develop prompts, normalization rules, and match thresholds. Freeze those settings and the scoring rules before the held-out run. Keep held-out documents and labels out of tuning, examples, and debugging.
