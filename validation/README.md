@@ -30,6 +30,36 @@ The suite checks both extraction schemas against their original bytes from `5bdb
 
 The [checksum file](corpus/v1/SHA256SUMS) pins reviewed source documents, complete ground truth, reconciliation labels, the manifest, and the master BOQ. From `validation/corpus/v1`, run `shasum -a 256 -c SHA256SUMS` for an independent byte check. When intentionally publishing a revised fixture set, review the documents and annotations together before recording updated hashes in a new corpus version. An unexplained mismatch calls for inspecting the changed file.
 
+## WP4 Task 4.2 local extraction
+
+Use Python 3.9 or later with the pinned dependency from the offline validation setup. From the repository root, run the fixture replay CLI and the test suite with that Python interpreter.
+
+```sh
+python -B -m validation.extraction validation/corpus/v1/development/documents/Q-DEV-01.pdf --kind quotation
+python -B -m validation.extraction validation/corpus/v1/held-out/documents/D-HOLD-03.png --kind title_deed
+python -B -m unittest discover -s validation -v
+```
+
+The CLI prints one JSON object with `status`, `documentKind`, `payload`, `unavailableFields`, and `errors`.
+
+| Status | Exit code | Meaning |
+| --- | ---: | --- |
+| `complete` | 0 | The payload passes the canonical schema and contains values for the required fields. |
+| `needs_review` | 1 | Required values are unavailable. The partial payload retains the returned rows and reports a reason and JSON Pointer for each unavailable field. |
+| `failed` | 2 | The input, provider response, or an observed value is invalid. The result includes errors and a null payload. |
+
+The pipeline validates PDF, PNG, JPG, and JPEG files locally. It checks the regular-file and size requirements, extension, and basic format structures before submitting the same bytes to the provider. The default limit is 20 MiB per file. These checks verify file framing and detect common corruption.
+
+By default, `MockProvider` replays responses for the ten frozen synthetic documents by SHA-256 and requested kind. It uses the frozen gold payloads for complete documents and the visible values and missing-field annotations for the two incomplete documents. Unknown inputs produce a provider error in this mode. Live extraction accuracy needs a real provider and an independent benchmark. Both CLI modes run without network access or API keys.
+
+To supply a mock response for any supported local document, add `--mock-response PATH`. The response file contains the raw UTF-8 JSON extraction object for the selected kind. Use `null` or omit unavailable values, and keep the affected rows. The pipeline adds JSON Pointers and default reasons for those fields. A missing or unreadable response file returns `failed`. The document still goes through the normal file checks.
+
+```sh
+python -B -m validation.extraction document.jpg --kind quotation --mock-response response.json
+```
+
+To plug in another provider, implement `ExtractionProvider.extract(document, kind)` and supply the instance to `ExtractionPipeline(provider)`. `document` carries the validated bytes and MIME type. Return `ProviderResponse` with JSON payload text and, optionally, reasons keyed by JSON Pointer into that payload. Use `null` or omit a required property when its value is unavailable. The pipeline also flags blank required strings and empty required row arrays for review. It preserves zero, `false`, and decimal precision and validates available values against the canonical schema with date checking enabled. Providers can raise `ProviderError` with a caller-safe message when extraction cannot finish. [Provider contract](extraction/pipeline.py)
+
 ## Run a held-out benchmark
 
 1. Use the development documents, labels, and `SYN-DEV` BOQ to develop prompts, normalization rules, and match thresholds. Freeze those settings and the scoring rules before the held-out run. Keep held-out documents and labels out of tuning, examples, and debugging.
