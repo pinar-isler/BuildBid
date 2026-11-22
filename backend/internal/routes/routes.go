@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"buildbid/backend/internal/handlers"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -18,4 +20,18 @@ func SetupRoutes(app *fiber.App) {
 			"message": "BuildBid API v1 ready",
 		})
 	})
+
+	projects := api.Group("/projects")
+	projects.Post("/", handlers.CreateProject)
+	projects.Get("/", handlers.GetProjects)
+	projects.Get("/:id", handlers.GetProjectByID)
+	projects.Post("/:projectId/boq-items", handlers.CreateBOQItem)
+	projects.Get("/:projectId/boq-items", handlers.GetBOQItemsByProject)
+	projects.Post("/:projectId/quotations", handlers.CreateQuotation)
+	projects.Get("/:projectId/quotations", handlers.GetQuotationsByProject)
+	projects.Get("/:projectId/comparison-matrix", handlers.GetComparisonMatrix)
+
+	api.Get("/quotations/:id", handlers.GetQuotationByID)
+	api.Post("/quotations/:id/reconcile", handlers.RunReconciliation)
+	api.Patch("/reconciliations/:id", handlers.VerifyReconciliation)
 }
